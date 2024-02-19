@@ -8,20 +8,43 @@
 import SwiftUI
 
 struct ContentView: View {
-    @Environment(\.verticalSizeClass) var verticalSizeClass: UserInterfaceSizeClass?
-    @Environment(\.horizontalSizeClass) var horizontalSizeClass: UserInterfaceSizeClass?
+    
+    @EnvironmentObject var model: Model
+    @AppStorage("selectedTab") var selectedTab: Tab = .dashboard
+    @AppStorage("showAccount") var showAccount = false
+    
+    init() {
+        showAccount = false
+    }
     
     var body: some View {
-        
-        if horizontalSizeClass == .compact && verticalSizeClass == .regular {
-           TabBar()
+        ZStack {
+            Group {
+                switch selectedTab {
+                case .dashboard:
+                    DashboardView()
+                case .explore:
+                    ExploreView()
+                case .notifications:
+                    NotificationsView()
+                case .library:
+                    LibraryView()
+                }
+            }
+            .safeAreaInset(edge: .bottom) {
+                VStack {}.frame(height: 44)
+            }
+            
+            TabBar()
+            
+            if model.showModal {
+                ModalView()
+                    .accessibilityIdentifier("Identifier")
+            }
         }
-//        else if horizontalSizeClass == .regular && verticalSizeClass == .compact {
-//            
-//            Text("iPhone Landscape")
-//        }
-        else if horizontalSizeClass == .regular && verticalSizeClass == .regular {
-            SideBar()
+        .dynamicTypeSize(.large ... .xxLarge)
+        .sheet(isPresented: $showAccount) {
+            AccountView()
         }
     }
 }

@@ -9,9 +9,13 @@ import SwiftUI
 
 @main
 struct Adulting_101_iOSApp: App {
+    
+    @StateObject var model = Model()
+    
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environmentObject(Model())
         }
     }
 }
